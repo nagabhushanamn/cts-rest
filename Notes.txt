@@ -1,0 +1,232 @@
+
+
+what is REST ?
+
+Designing REST API
+
+  using ' Uniform Interface ' ( API ) arch-style's constraints
+  
+  
+  e.g   OrderEntrySystem of e-commerce 
+  
+  
+     Object Model
+     --------------
+     
+      a. Order
+            id       : int
+            total    : float
+            datte    : Date
+            customer : Customer
+            lineItems: LineItem[]
+      b. Customer
+      c. LineItem
+      d. Product
+      
+      
+      OrderEntryService - endpoint
+      
+      
+      
+      1. Model the URI 
+      
+        /orders
+        /orders/{id}
+        /products
+        /products/{id}
+        /customers
+        /customers/{id}
+       
+      2. Defining the DataFormat
+      
+         XML 
+         
+         e.g
+         
+         GET /customers/771
+         
+         <customer id="771">
+            <link rel="self" href="http://example.com/customers/771"/>
+            <first-name>Nag</first-name>
+            <last-name>N</last-name>
+            ...
+         </customer> 
+         
+         GET /products/543
+         
+         <product id="543">
+          <link rel="self" href="http://example.com/products/543"/>
+            <name>Mobile</name>
+            <cost>$12.12</cost>
+         </product>
+         
+         GET /orders/133
+         
+         
+         <order id="133">
+             <link rel="self" href="http://example.com/orders/133"/>
+            <total>1000.00</total>
+            <date>january 5, 2016 6:06</date>
+            <customer>
+                 <link rel="self" href="http://example.com/customers/771"/>
+            </customer>
+            <line-items>
+                <line-item id="144">
+                    <product>
+                        <link rel="self" href="http://example.com/products/543"/>
+                    </product>
+                </line-item>
+            </line-items>
+         </order>
+         
+         
+         
+         Data Format for clients
+         ----------------------
+         
+         POST /products
+         
+         <product>
+            <name>Mobile</name>
+            <cost>$12.12</cost>
+         </product>
+         
+         
+        3. Assign HTTP Methods
+        
+       
+           browse all orders , customers , products
+           
+           GET /products HTTP/1.1
+           
+           response
+           
+           HTTP 1.1 200 OK
+           Content-Type: application/xml
+           
+           <products>
+            ....
+           </products>
+           
+           
+           GET /orders?startIndex=0&size=10 HTTP/1.1
+           
+           
+           Obtaining Individual Order,Customer,Product
+           
+           GET /products/{id}
+           
+           
+           Creating an Order,Customer,Product
+           
+             2-ways
+             
+             a.creating with PUT
+             
+             PUT /orders/233 HTTP/1.1
+             
+             b.creating with POST
+             
+             POST /orders
+             
+             response
+             
+             HTTP/1.1 201 Created
+             Location: http://example.com/orders/233
+           
+           Updating an Order,Ckustomer or Product
+           
+           PUT /orders/232
+           
+           
+           Removing an Order,Customer , or Product
+         
+           DELETE  /orders/233
+           
+           
+           Cancelling an Order
+           
+           
+            a. Overloading the meaning of DELETE  ( Not good approach )
+            
+            DELETE /orders/233?cancel=true
+            
+            operation or state-chage
+           
+            <order>
+                ....
+                <cancelled>false</cancelled>
+            </order>
+            
+            PUT /orders/233
+            
+            <order>
+                ....
+                <cancelled>true</cancelled>
+            </order>
+            
+            
+            ques
+            
+            what is different between
+            DELETE /orders/233?cancel=true    // remove that resource
+            vs 
+            PUT /orders/233?status=cancel     // state change
+            
+            
+            ---------------------------------------------
+            like WSDL in SOAP
+            for REST
+            
+            WADL  ( Not standard )  
+            
+            --------------------------------------------
+            
+            
+            
+            
+            
+            How to implement REST API  using Java Lang ? RESTful
+            
+            using Servlet API
+            
+             Lpimitations on Servlet API
+             
+               --> need to write lot of boiler-plate code
+            
+                   ->converting ( marshaling / un-marshaling ) java-objects ot any Representation and vice-versa
+                   ->mapping exceptions to eq HTTP status code
+                   ->injecting query,path param is difficult...
+                   
+            in 2008 , java community introcued new API/spec to write RESTful WS
+            
+              JAX-RS
+              
+             there are many provider/implns of JAX-RS     
+             
+               jersey  --> sum impln of JAX-RS  ( glassfish project )
+               RESTEasy --> Jboss
+               AXIS     --> Apache
+               RESTlet
+               
+               and also  ever Java EE server has its own implementation of JAX-RS
+               
+              JAX-RS is annotation based spec , to write REST endpoints
+              
+              
+              JAX-RS use JAXB for xml processing
+              
+              
+              
+              
+              //-----------
+              
+              Data conversion
+              custom message reader/writers
+              JSON supprt
+              cache depth
+              
+              security
+              
+              //--------------------------
+              
