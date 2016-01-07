@@ -1,0 +1,252 @@
+
+
+// Root Resources
+@Path("/customers")
+ 
+ //URI path parameter 
+ @Path("/customers/{id}")
+ 
+ 
+ HTTP Methods
+ @GET , @POST , @PUT , @DELETE
+ 
+ produce and consume any media type
+ @Produces
+ @Consumes
+ 
+ using multiple output media types
+ @Produce({"application/xml","application/json"})
+ 
+ 
+ Server side Conent-Negotiation
+ 
+ request :- GET /customers
+ Accept  : application/xml
+ 
+ @GET
+ @path("/customers")
+ @Produce({"application/xml;q=0.9","application/json"})
+ public Customer doGetAsXmlOrJson(){
+ }
+ 
+ 
+ Parameter Annotations / JAX-RS Injectors
+ 
+ @QueryParam
+ 
+ GET /something?param=12
+ 
+ @Path("/something")
+ @GET
+ public Response getSomething(@DefaultValue("10") @QueryParam("param")int v){
+ 
+ }
+ 
+ 
+ Processing POSTed HTML form
+ @FormParam
+ 
+ @POST
+ @Consumes("application/x-www-form-urlencoded")
+ public void post(@FormParam("name") String name ){
+ 
+ }
+ 
+ obtaining general map of form params
+ @POST
+ @Consumes("application/x-www-form-urlencoded")
+ public void post(MultiValuedMap<String,String> formParams){
+ 
+ }
+ 
+ 
+ to get URI path and/or Query parameters , and headers
+ @Context
+ 
+ @GET
+ public String get(@Context UriInfo uri,@Context HttpHeaders hh){
+ MultiValuedMap<String,String> queryParams=uri.getQueryParameters();
+ MultiValuedMap<String,String> pathParams=uri.getPathParameters();
+ 
+ MultiValuedMap<String,String> requestHeaders=uri.getRequestheaders();
+ MultiValuedMap<String,String> cookies=uri.getCookies);
+ }
+ 
+ //----------------------------------------------------
+ 
+ @BeanParam
+ ------------
+ 
+ public class MyBeanParam{
+ 
+ @PathParam("p")
+ private String pathParam;
+ 
+ @MatrixParam("m")
+ @DefaultValue("default")
+ private String matrixParam;
+ 
+ @HeaderParam("header);
+ private String headerParam;
+ 
+ private String queryParam;
+ 
+ public MyBeanParam(@QueryParam("q")String qp);
+ this.queryParam=qp;
+ }
+ 
+ //set/get
+ 
+ }
+ 
+ 
+ //
+ 
+ @PATH("/uri")
+ public class Endpoint{
+ 
+ @POST
+ public void post(@BeanParam MyBeanParam beanParam){
+ 
+ }
+ 
+ }
+ 
+ //---------------------------------------------------------
+ 
+ 
+ Lifecycle of Root-Resources
+ 
+ 
+ @Path('/customers")
+ @RequestScoped
+ public class CustomerResource{
+ 
+ 
+ @GET
+ public String get(){
+ 
+ }
+ 
+ }
+ 
+ 
+ // GET /customers
+  // GET /customers
+   // GET /customers
+   
+   
+ --------------------------------
+ 
+ 
+ Response-Codes , Complex Responses , ExceptionHandling
+ 
+    Response code
+    
+    1XXX  - 5XXX
+    
+    1xxx  --> n/w related info
+    
+    2xxx - 3xxx --> success
+    4xxX - 5xxx --> failure
+    
+    //-------------------
+    
+    default response codes
+    
+    
+    
+    200 - 399   : successful response
+    201
+    
+    -------------------------------
+    
+    
+    HTTP Content Negotiation ( conneg )
+    
+    
+    GET http://example.com/stuff
+    //Accept : application/xml,application/json
+      Accept : text/*,text/html;level=1  
+      
+      Preference Ordering
+      
+      GET http://example.com/stuff
+      Accept : text/*,text/html;level=1,*/*,aplication/xml 
+      
+      1. text/html;level=1
+      2. aplication/xml
+      3. text/*
+      4. */*
+      
+      
+      GET http://example.com/stuff
+      Accept : text/*;q=0.9,*/*;q=0.1,audio/mpeg,audio/mp3,aplication/xml;q=0.5 
+      
+      1. audio/mepeg
+      2. text/*
+      3. application/xml
+      4. */*
+      
+      
+       Language Negotiation
+       
+       GET http://example.com/stuff
+       Accept-Lnaguage : en-us,es,fr 
+       
+      
+       GET http://example.com/stuff
+       Accept-Lnaguage : en-us;q=0.1,es;q=1.0,fr;q=1.0 
+      
+      
+    
+      Encoding Negotiation
+      GET http://example.com/stuff
+      Accept-Encoding :gzip;q=1.0,deflate;0q=0.1 
+      
+      -----------------------------------------------
+      
+      
+      
+      HATEOAS ( HyperMedia As The Engine Of Application State )
+      
+      -----------------
+      
+      Cache
+      Security
+      
+      Exceptionhandling
+      -------------------
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

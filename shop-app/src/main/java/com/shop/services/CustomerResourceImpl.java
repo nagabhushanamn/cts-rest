@@ -3,6 +3,8 @@ package com.shop.services;
 import java.net.URI;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.inject.Singleton;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,14 +15,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+
+import org.glassfish.grizzly.http.util.HttpStatus;
+import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.jersey.process.internal.RequestScoped;
 
 import com.shop.domin.Customer;
 
 // JAX-RS
 
 //@Path(value = "/customers")
+//@RequestScoped
+//@Singleton
+//@PerLookup
 public class CustomerResourceImpl implements CustomerResource {
 
 	private AtomicInteger idCounter = new AtomicInteger();
@@ -65,7 +78,7 @@ public class CustomerResourceImpl implements CustomerResource {
 	// @GET
 	// @Path("{id}")
 	// @Produces({ MediaType.APPLICATION_XML })
-	public Customer getCustomer(int id) {
+	public Response getCustomer(int id,UriInfo uriInfo) {
 
 		// Get customer form DB
 
@@ -75,7 +88,37 @@ public class CustomerResourceImpl implements CustomerResource {
 		customer.setLastName("N");
 		customer.setAddress("BLR");
 
-		return customer;
+		NewCookie cookie = new NewCookie("cookie", "somevlaue");
+		
+		// link , customer orders  
+		/*
+		 *  http://localhost:8080/shop/api/customers/{id}/orders
+		 * 
+		 */
+
+
+//		UriBuilder uriBuilder=UriBuilder.fromUri("customers/{id}/orders");
+//		UriBuilder clone=uriBuilder.clone();
+//		URI uri=clone.build("http://localhost:8080/shop/api/",id);
+		
+		UriBuilder nextLinkBuilder=uriInfo.getAbsolutePathBuilder();
+		nextLinkBuilder.queryParam("start", 0);
+		nextLinkBuilder.queryParam("size", 10);
+		
+		URI next=nextLinkBuilder.build();
+		
+		System.out.println(next.toString());
+
+		ResponseBuilder builder = Response.ok();
+		builder.language("en")
+		       .header("some-header", "some-value")
+		       .cookie(cookie)
+               .link(next, "next")
+		       .entity(customer);
+		
+		
+		
+		return builder.build();
 
 	}
 
@@ -94,11 +137,16 @@ public class CustomerResourceImpl implements CustomerResource {
 	// @Produces({ MediaType.APPLICATION_XML })
 	public Response updateCustomer(int id, Customer customer) {
 
-		if (id != 123) {
-			throw new WebApplicationException(Response.Status.NOT_FOUND);
-		}
+		// if (id != 123) {
+		// throw new WebApplicationException(Response.Status.NOT_FOUND);
+		// }
+		//
+		// System.out.println(customer);
 
-		System.out.println(customer);
+		// create
+		if (id == 123) {
+			throw new WebApplicationException(Response.Status.CONFLICT);
+		}
 
 		return Response.ok(customer).build();
 
@@ -114,9 +162,14 @@ public class CustomerResourceImpl implements CustomerResource {
 	// @Override
 	// @DELETE
 	// @Path("{id}")
-	public void deleteCustomer(int id,URI uri) {
-		
-		System.out.println(id + " customer deleted...");
+	public void deleteCustomer(@BeanParam CustomerBeanParam beanParam) {
+
+		System.out.println(beanParam.getCustomerId() + " customer deleted...");
+
+		//
+		if (beanParam.getCustomerId() != 123) {
+			throw new WebApplicationException(Response.Status.NOT_FOUND);
+		}
 
 	}
 
@@ -126,5 +179,10 @@ public class CustomerResourceImpl implements CustomerResource {
 	// String carColor=car.getMatrixParameters().getFirst("color");
 	// return null;
 	// }
+
+	@Override
+	public String getCustomerReport() {
+		return "Vendor report";
+	}
 
 }

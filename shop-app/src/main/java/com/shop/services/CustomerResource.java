@@ -2,6 +2,7 @@ package com.shop.services;
 
 import java.net.URI;
 
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -16,6 +17,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 import com.shop.domin.Customer;
 
@@ -28,8 +30,8 @@ public interface CustomerResource {
 
 	@GET
 	@Path("{id}")
-	@Produces("application/xml")
-	Customer getCustomer(@PathParam("id") int id);
+	@Produces({ "application/xml", MediaType.APPLICATION_JSON })
+	Response getCustomer(@PathParam("id") int id,@Context UriInfo uriInfo);
 
 	@PUT
 	@Path("{id}")
@@ -39,7 +41,8 @@ public interface CustomerResource {
 
 	@DELETE
 	@Path("{id}")
-	void deleteCustomer(@PathParam("id") int id,@Context URI uri);
+	// void deleteCustomer(@PathParam("id") int id,@Context URI uri);
+	void deleteCustomer(@BeanParam CustomerBeanParam beanParam);
 
 	// ---------------------------------------------------
 
@@ -107,7 +110,7 @@ public interface CustomerResource {
 	 * 
 	 * @Context
 	 * 
-	 *    to get cuurrent URI complete details on service metmhod
+	 * to get cuurrent URI complete details on service metmhod
 	 * 
 	 */
 
@@ -151,5 +154,34 @@ public interface CustomerResource {
 	// @GET
 	// public String getAllCustomer(@QueryParam("start") int
 	// start,@QueryParam("size")int size);
+
+	// --------------------------------------------------------------------------
+
+	// JAX-RS and connneg
+
+	// a. Method Dispatching
+	//
+	// @Path("uri")
+	// @GET
+	// @Produces("application/xml")
+	// public Customer getCustomerXML();
+	//
+	// @Path("uri")
+	// @GET
+	// @Produces("application/json")
+	// public Customer getCustomerJSON();
+	//
+	// @Path("uri")
+	// @GET
+	// @Produces("text/plain")
+	// public Customer getCustomerText();
+	
+	
+	//----------------------------------------------------
+	
+	@Path("report")
+	@GET
+	@Produces("application/vnd.excell")
+	public String getCustomerReport();
 
 }
