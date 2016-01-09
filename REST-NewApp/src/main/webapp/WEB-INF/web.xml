@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+
+
+	<servlet>
+		<servlet-name>REST-App</servlet-name>
+		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+		<init-param>
+			<param-name>javax.ws.rs.Application</param-name>
+			<param-value>com.shop.MyApplication</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>REST-App</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+
+	
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<realm-name>file</realm-name>
+		<form-login-config>
+			<form-login-page>/login.html</form-login-page>
+			<form-error-page>/error.html</form-error-page>
+		</form-login-config>
+	</login-config>
+
+
+
+	<security-constraint>
+
+		<web-resource-collection>
+			<web-resource-name>secure appln</web-resource-name>
+			<url-pattern>/rest/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+
+		<auth-constraint>
+			<role-name>Admin</role-name>
+			<role-name>User</role-name>
+		</auth-constraint>
+
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+
+	</security-constraint>
+
+	<security-role>
+		<role-name>Admin</role-name>
+	</security-role>
+
+	<security-role>
+		<role-name>User</role-name>
+	</security-role>
+
+
+</web-app>
