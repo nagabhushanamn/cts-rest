@@ -1,0 +1,72 @@
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- needed for ContextLoaderListener -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+
+	<!-- Bootstraps the root web application context before servlet initialization -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+
+	<filter>
+		<filter-name>pm</filter-name>
+		<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
+		<init-param>
+			<param-name>javax.ws.rs.Application</param-name>
+			<param-value>com.cts.rest.app.MyApplication</param-value>
+		</init-param>
+		<!-- pass to next filter if Jersey/App returns 404 -->
+		<init-param>
+			<param-name>jersey.config.servlet.filter.forwardOn404</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>pm</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>file</realm-name>
+	</login-config>
+
+
+<!-- 	<security-constraint> -->
+
+<!-- 		<web-resource-collection> -->
+<!-- 			<web-resource-name>secure appln</web-resource-name> -->
+<!-- 			<url-pattern>/products/*</url-pattern> -->
+<!-- 			<http-method>GET</http-method> -->
+<!-- 			<http-method>POST</http-method> -->
+<!-- 			<http-method>DELETE</http-method> -->
+<!-- 			<http-method>PUT</http-method> -->
+<!-- 		</web-resource-collection> -->
+
+<!-- 		<auth-constraint> -->
+<!-- 			<role-name>Admin</role-name> -->
+<!-- 			<role-name>User</role-name> -->
+<!-- 		</auth-constraint> -->
+
+<!-- 	</security-constraint> -->
+
+<!-- 	<security-role> -->
+<!-- 		<role-name>Admin</role-name> -->
+<!-- 	</security-role> -->
+
+<!-- 	<security-role> -->
+<!-- 		<role-name>User</role-name> -->
+<!-- 	</security-role> -->
+
+
+</web-app>
